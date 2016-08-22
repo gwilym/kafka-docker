@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ -n "$CUSTOM_PRE_INIT_SCRIPT" ]] ; then
+  eval $CUSTOM_PRE_INIT_SCRIPT
+fi
+
 if [[ -z "$KAFKA_PORT" ]]; then
     export KAFKA_PORT=9092
 fi
