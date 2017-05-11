@@ -41,6 +41,16 @@ do
         echo "$kafka_name=${!env_var}" >> $KAFKA_HOME/config/server.properties
     fi
   fi
+
+  if [[ $VAR =~ ^LOG4J_ ]]; then
+    log4j_name=`echo "$VAR" | tr '[:upper:]' '[:lower:]' | tr _ .`
+    env_var=`echo "$VAR" | sed -r "s/(.*)=.*/\1/g"`
+    if egrep -q "(^|^#)$log4j_name=" $KAFKA_HOME/config/log4j.properties; then
+        sed -r -i "s@(^|^#)($log4j_name)=(.*)@\2=${!env_var}@g" $KAFKA_HOME/config/log4j.properties #note that no config values may contain an '@' char
+    else
+        echo "$log4j_name=${!env_var}" >> $KAFKA_HOME/config/log4j.properties
+    fi
+  fi
 done
 
 if [[ -n "$CUSTOM_INIT_SCRIPT" ]] ; then
@@ -64,7 +74,7 @@ term_handler() {
 
 # Capture kill requests to stop properly
 trap "term_handler" SIGHUP SIGINT SIGTERM
-create-topics.sh & 
+create-topics.sh &
 $KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/config/server.properties &
 KAFKA_PID=$!
 
