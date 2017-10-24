@@ -1,7 +1,10 @@
 FROM anapsix/alpine-java
 
-ARG kafka_version=0.11.0.0
-ARG scala_version=2.12
+ARG kafka_version=0.11.0.1
+
+# We build for multiple versions of Scala. This only matters if you are using Scala and you want a version built for the
+# same Scala version you use. Otherwise any version should work (2.11 is recommended). -- https://kafka.apache.org/downloads
+ARG scala_version=2.11
 
 MAINTAINER wurstmeister
 
